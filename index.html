@@ -5,16 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Interface Cyberpunk IA</title>
 
-  <!-- Fonte futurista (substituta da Kroigs) -->
+  <!-- Fonte futurista -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    /* Fundo Cyberpunk */
     body {
       margin: 0;
       padding: 0;
       font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(to bottom, #1a0000, #330000, #4d0000);
+      background: linear-gradient(135deg, #2B0E12, #0d0907);
       color: #ff3c00;
       height: 100vh;
       display: flex;
@@ -22,7 +21,20 @@
       align-items: center;
     }
 
+    #boot-screen {
+      white-space: pre-wrap;
+      font-size: 16px;
+      background-color: #0d0907;
+      border: 2px solid #ff3c00;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 20px #ff3c0055;
+      max-width: 600px;
+      width: 90%;
+    }
+
     .chat-container {
+      display: none;
       width: 90%;
       max-width: 700px;
       background-color: rgba(0, 0, 0, 0.85);
@@ -98,7 +110,11 @@
 </head>
 
 <body>
-  <div class="chat-container">
+  <!-- Tela de inicialização -->
+  <div id="boot-screen"></div>
+
+  <!-- Chat após animação -->
+  <div class="chat-container" id="chat-container">
     <h1>PROTOCOLO: CHAT IA - REDNET</h1>
     <div id="chat-box"></div>
     <input type="text" id="user-input" placeholder="Insira sua mensagem..." />
@@ -106,6 +122,32 @@
   </div>
 
   <script>
+    const bootLines = [
+      "> Inicializando protocolo REDNET...",
+      "> Carregando módulos neurais...",
+      "> Conectando à matriz...",
+      "> Estabilizando frequência...",
+      "> Conexão estabelecida. Bem-vindo, operador."
+    ];
+
+    const bootScreen = document.getElementById("boot-screen");
+    const chatContainer = document.getElementById("chat-container");
+
+    let line = 0;
+    function showNextLine() {
+      if (line < bootLines.length) {
+        bootScreen.textContent += bootLines[line] + "\n";
+        line++;
+        setTimeout(showNextLine, 800);
+      } else {
+        setTimeout(() => {
+          bootScreen.style.display = "none";
+          chatContainer.style.display = "block";
+        }, 1000);
+      }
+    }
+    window.onload = showNextLine;
+
     function sendMessage() {
       const input = document.getElementById("user-input");
       const message = input.value.trim();
@@ -113,7 +155,6 @@
 
       const chatBox = document.getElementById("chat-box");
 
-      // Mensagem do usuário (à direita)
       const userDiv = document.createElement("div");
       userDiv.classList.add("message", "user");
       userDiv.textContent = "Você: " + message;
@@ -121,7 +162,6 @@
 
       input.value = "";
 
-      // Resposta da IA (à esquerda)
       setTimeout(() => {
         const botDiv = document.createElement("div");
         botDiv.classList.add("message", "bot");
