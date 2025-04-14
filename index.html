@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Invasão de Rede</title>
+  <title>Interface Cyberpunk</title>
 
-  <!-- Anime.js CDN -->
+  <!-- Anime.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
-  <!-- Fonte estilo cyberpunk (Orbitron) -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
+  <!-- Fonte estilo digital -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
 
   <style>
     * {
@@ -25,6 +25,7 @@
       overflow: hidden;
     }
 
+    /* Primeira transição - hacking */
     #transition-screen {
       position: fixed;
       width: 100vw;
@@ -43,12 +44,6 @@
       opacity: 0;
     }
 
-    #main-content {
-      display: none;
-      padding: 30px;
-      text-align: center;
-    }
-
     .glitch {
       animation: glitch 1s infinite;
     }
@@ -60,39 +55,108 @@
       75% { text-shadow: -2px 0 #0ff; }
       100% { text-shadow: 2px 0 red; }
     }
+
+    /* Segunda transição - sistema ligando */
+    #boot-animation {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background-color: #0d0907;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+      opacity: 0;
+    }
+
+    .boot-line {
+      width: 0;
+      height: 2px;
+      background: #ff3c00;
+    }
+
+    /* Conteúdo do Chat */
+    #main-content {
+      display: none;
+      padding: 40px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .chat-box {
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid #ff3c00;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 30px;
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- Transição estilo invasão -->
+  <!-- Primeira Transição (hack) -->
   <div id="transition-screen">
     <div class="line glitch">> Estabelecendo conexão segura...</div>
     <div class="line glitch">> Decodificando firewall...</div>
     <div class="line glitch">> Acesso concedido.</div>
   </div>
 
-  <!-- Conteúdo do Chat -->
-  <div id="main-content">
-    <h1>🤖 Interface Neural Conectada</h1>
-    <p>Você pode iniciar a conversa com a IA.</p>
+  <!-- Segunda Transição (boot) -->
+  <div id="boot-animation">
+    <div class="boot-line"></div>
   </div>
 
-  <!-- Animação com Anime.js -->
+  <!-- Conteúdo final -->
+  <div id="main-content">
+    <h1>🤖 Interface Neural Conectada</h1>
+    <div class="chat-box">
+      <p><strong>IA:</strong> Conexão estabelecida. Estou ouvindo.</p>
+      <p><strong>Você:</strong> Me ouve?</p>
+      <p><strong>IA:</strong> Claramente. Sinais fortes. Pronto para iniciar.</p>
+    </div>
+  </div>
+
   <script>
     const lines = document.querySelectorAll('.line');
+    const transitionScreen = document.getElementById('transition-screen');
+    const boot = document.getElementById('boot-animation');
+    const bootLine = document.querySelector('.boot-line');
+    const mainContent = document.getElementById('main-content');
+
     anime({
       targets: lines,
       opacity: [0, 1],
-      delay: anime.stagger(1000), // tempo entre as frases
+      delay: anime.stagger(1000),
       easing: 'easeInOutQuad',
       complete: () => {
-        // Após a transição, mostra o conteúdo principal
         setTimeout(() => {
-          document.getElementById('transition-screen').style.display = 'none';
-          document.getElementById('main-content').style.display = 'block';
+          transitionScreen.style.display = 'none';
+          boot.style.opacity = 1;
+
+          anime({
+            targets: bootLine,
+            width: ['0%', '100%'],
+            duration: 1000,
+            easing: 'easeInOutExpo',
+            complete: () => {
+              anime({
+                targets: bootLine,
+                height: ['2px', '100vh'],
+                duration: 800,
+                easing: 'easeInOutExpo',
+                complete: () => {
+                  boot.style.display = 'none';
+                  mainContent.style.display = 'block';
+                }
+              });
+            }
+          });
+
         }, 1000);
       }
     });
   </script>
+
 </body>
 </html>
