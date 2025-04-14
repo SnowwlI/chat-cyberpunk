@@ -3,11 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Cyberpunk </title>
-    <!-- Linkando o CSS -->
-    <link rel="stylesheet" href="style.css">
-    <!-- Linkando o JS -->
-    <script src="script.js" defer></script>
+    <title>Chat Cyberpunk IA</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            background-color: #121212;
+            color: #00ff99;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+        }
+
+        #chat-box {
+            margin-bottom: 20px;
+            height: 300px;
+            overflow-y: auto;
+            background-color: #333;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 10px;
+            border: 1px solid #00ff99;
+            background-color: #333;
+            color: white;
+        }
+
+        button {
+            background-color: #00ff99;
+            color: #121212;
+            border-radius: 10px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #00cc7a;
+        }
+    </style>
 </head>
 <body>
     <div class="chat-container">
@@ -16,5 +64,42 @@
         <input type="text" id="user-input" placeholder="Digite sua mensagem...">
         <button onclick="sendMessage()">Enviar</button>
     </div>
+
+    <script>
+        // Função que simula o envio da mensagem
+        function sendMessage() {
+            var userInput = document.getElementById('user-input').value;
+            if (userInput.trim() !== "") {
+                var chatBox = document.getElementById('chat-box');
+                
+                // Adiciona a mensagem do usuário
+                var userMessage = document.createElement('div');
+                userMessage.textContent = "Usuário: " + userInput;
+                chatBox.appendChild(userMessage);
+                
+                // Limpa o campo de entrada
+                document.getElementById('user-input').value = "";
+                
+                // Simula a resposta da IA
+                setTimeout(function() {
+                    var botMessage = document.createElement('div');
+                    botMessage.textContent = "IA: " + getBotResponse(userInput);
+                    chatBox.appendChild(botMessage);
+                    chatBox.scrollTop = chatBox.scrollHeight; // Rola para o fundo para mostrar as mensagens mais recentes
+                }, 1000);
+            }
+        }
+
+        // Função que define as respostas da IA
+        function getBotResponse(userInput) {
+            if (userInput.toLowerCase().includes("olá")) {
+                return "Olá, como posso ajudar você?";
+            } else if (userInput.toLowerCase().includes("como vai")) {
+                return "Estou bem, obrigado por perguntar!";
+            } else {
+                return "Desculpe, não entendi a sua mensagem.";
+            }
+        }
+    </script>
 </body>
 </html>
