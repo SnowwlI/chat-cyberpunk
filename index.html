@@ -2,182 +2,97 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Interface Cyberpunk IA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invasão de Rede</title>
 
-  <!-- Fonte futurista -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Anime.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+  <!-- Fonte estilo cyberpunk (Orbitron) -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
 
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
       font-family: 'Orbitron', sans-serif;
       background: linear-gradient(135deg, #2B0E12, #0d0907);
       color: #ff3c00;
+      overflow: hidden;
+    }
+
+    #transition-screen {
+      position: fixed;
+      width: 100vw;
       height: 100vh;
+      background: linear-gradient(135deg, #2B0E12, #0d0907);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 9999;
     }
 
-    #boot-screen {
-      white-space: pre-wrap;
-      font-size: 16px;
-      background-color: #0d0907;
-      border: 2px solid #ff3c00;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 20px #ff3c0055;
-      max-width: 600px;
-      width: 90%;
+    .line {
+      font-size: 1.2rem;
+      margin: 5px 0;
+      opacity: 0;
     }
 
-    .chat-container {
+    #main-content {
       display: none;
-      width: 90%;
-      max-width: 700px;
-      background-color: rgba(0, 0, 0, 0.85);
-      padding: 20px;
-      border: 2px solid #ff3c00;
-      border-radius: 10px;
-      box-shadow: 0 0 20px #ff3c00a0;
-    }
-
-    h1 {
-      margin-top: 0;
+      padding: 30px;
       text-align: center;
-      font-weight: bold;
-      font-size: 24px;
-      text-shadow: 0 0 5px #ff3c00;
     }
 
-    #chat-box {
-      height: 300px;
-      overflow-y: auto;
-      padding: 10px;
-      border: 1px solid #ff3c00;
-      margin-bottom: 15px;
-      background-color: rgba(255, 60, 0, 0.05);
-      border-radius: 5px;
+    .glitch {
+      animation: glitch 1s infinite;
     }
 
-    .message {
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 10px;
-      max-width: 70%;
-      word-wrap: break-word;
-    }
-
-    .user {
-      background-color: #ff3c0020;
-      align-self: flex-end;
-      text-align: right;
-      margin-left: auto;
-      border: 1px solid #ff3c00;
-    }
-
-    .bot {
-      background-color: #111;
-      border: 1px solid #ff3c00;
-    }
-
-    #user-input {
-      width: 75%;
-      padding: 10px;
-      background-color: #1a0000;
-      color: #ff3c00;
-      border: 1px solid #ff3c00;
-      border-radius: 5px;
-    }
-
-    button {
-      width: 20%;
-      padding: 10px;
-      background-color: #ff3c00;
-      color: #1a0000;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #ff5e00;
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red; }
+      25% { text-shadow: -2px 0 #0ff; }
+      50% { text-shadow: 2px 0 red; }
+      75% { text-shadow: -2px 0 #0ff; }
+      100% { text-shadow: 2px 0 red; }
     }
   </style>
 </head>
-
 <body>
-  <!-- Tela de inicialização -->
-  <div id="boot-screen"></div>
 
-  <!-- Chat após animação -->
-  <div class="chat-container" id="chat-container">
-    <h1>PROTOCOLO: CHAT IA - REDNET</h1>
-    <div id="chat-box"></div>
-    <input type="text" id="user-input" placeholder="Insira sua mensagem..." />
-    <button onclick="sendMessage()">ENVIAR</button>
+  <!-- Transição estilo invasão -->
+  <div id="transition-screen">
+    <div class="line glitch">> Estabelecendo conexão segura...</div>
+    <div class="line glitch">> Decodificando firewall...</div>
+    <div class="line glitch">> Acesso concedido.</div>
   </div>
 
+  <!-- Conteúdo do Chat -->
+  <div id="main-content">
+    <h1>🤖 Interface Neural Conectada</h1>
+    <p>Você pode iniciar a conversa com a IA.</p>
+  </div>
+
+  <!-- Animação com Anime.js -->
   <script>
-    const bootLines = [
-      "> Inicializando protocolo REDNET...",
-      "> Carregando módulos neurais...",
-      "> Conectando à matriz...",
-      "> Estabilizando frequência...",
-      "> Conexão estabelecida. Bem-vindo, operador."
-    ];
-
-    const bootScreen = document.getElementById("boot-screen");
-    const chatContainer = document.getElementById("chat-container");
-
-    let line = 0;
-    function showNextLine() {
-      if (line < bootLines.length) {
-        bootScreen.textContent += bootLines[line] + "\n";
-        line++;
-        setTimeout(showNextLine, 800);
-      } else {
+    const lines = document.querySelectorAll('.line');
+    anime({
+      targets: lines,
+      opacity: [0, 1],
+      delay: anime.stagger(1000), // tempo entre as frases
+      easing: 'easeInOutQuad',
+      complete: () => {
+        // Após a transição, mostra o conteúdo principal
         setTimeout(() => {
-          bootScreen.style.display = "none";
-          chatContainer.style.display = "block";
+          document.getElementById('transition-screen').style.display = 'none';
+          document.getElementById('main-content').style.display = 'block';
         }, 1000);
       }
-    }
-    window.onload = showNextLine;
-
-    function sendMessage() {
-      const input = document.getElementById("user-input");
-      const message = input.value.trim();
-      if (!message) return;
-
-      const chatBox = document.getElementById("chat-box");
-
-      const userDiv = document.createElement("div");
-      userDiv.classList.add("message", "user");
-      userDiv.textContent = "Você: " + message;
-      chatBox.appendChild(userDiv);
-
-      input.value = "";
-
-      setTimeout(() => {
-        const botDiv = document.createElement("div");
-        botDiv.classList.add("message", "bot");
-        botDiv.textContent = "IA: " + getBotResponse(message);
-        chatBox.appendChild(botDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }, 600);
-    }
-
-    function getBotResponse(msg) {
-      const m = msg.toLowerCase();
-      if (m.includes("olá")) return "Saudações, usuário.";
-      if (m.includes("quem é você")) return "Sou uma interface neural conectada à rede vermelha.";
-      if (m.includes("sair")) return "Encerrando protocolo...";
-      return "Não encontrei protocolo para isso.";
-    }
+    });
   </script>
 </body>
 </html>
