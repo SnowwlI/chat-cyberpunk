@@ -25,7 +25,7 @@
       overflow: hidden;
     }
 
-    /* Primeira transição - hacking */
+    /* Primeira transição - digitação */
     #transition-screen {
       position: fixed;
       width: 100vw;
@@ -36,24 +36,13 @@
       justify-content: center;
       flex-direction: column;
       z-index: 9999;
-    }
-
-    .line {
       font-size: 1.2rem;
-      margin: 5px 0;
+    }
+
+    .type-line {
       opacity: 0;
-    }
-
-    .glitch {
-      animation: glitch 1s infinite;
-    }
-
-    @keyframes glitch {
-      0% { text-shadow: 2px 0 red; }
-      25% { text-shadow: -2px 0 #0ff; }
-      50% { text-shadow: 2px 0 red; }
-      75% { text-shadow: -2px 0 #0ff; }
-      100% { text-shadow: 2px 0 red; }
+      margin: 5px 0;
+      white-space: pre;
     }
 
     /* Segunda transição - sistema ligando */
@@ -89,17 +78,44 @@
       padding: 20px;
       border-radius: 10px;
       margin-top: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
+    .message {
+      text-align: left;
+      margin-bottom: 10px;
+    }
+
+    .message.user {
+      text-align: right;
+    }
+
+    input, button {
+      background: #0d0907;
+      color: #ff3c00;
+      border: 1px solid #ff3c00;
+      padding: 10px;
+      font-family: 'Orbitron', sans-serif;
+      width: 70%;
+      margin-top: 15px;
+    }
+
+    button {
+      width: 20%;
+      margin-left: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Primeira Transição (hack) -->
+  <!-- Primeira Transição (hack digitando) -->
   <div id="transition-screen">
-    <div class="line glitch">> Estabelecendo conexão segura...</div>
-    <div class="line glitch">> Decodificando firewall...</div>
-    <div class="line glitch">> Acesso concedido.</div>
+    <div class="type-line" id="line1"></div>
+    <div class="type-line" id="line2"></div>
+    <div class="type-line" id="line3"></div>
   </div>
 
   <!-- Segunda Transição (boot) -->
@@ -107,55 +123,113 @@
     <div class="boot-line"></div>
   </div>
 
-  <!-- Conteúdo final -->
+  <!-- Conteúdo final com Chat -->
   <div id="main-content">
     <h1>🤖 Interface Neural Conectada</h1>
-    <div class="chat-box">
-      <p><strong>IA:</strong> Conexão estabelecida. Estou ouvindo.</p>
-      <p><strong>Você:</strong> Me ouve?</p>
-      <p><strong>IA:</strong> Claramente. Sinais fortes. Pronto para iniciar.</p>
+    <div class="chat-box" id="chat-box">
+      <div class="message ia">IA: Conexão estabelecida. Estou ouvindo.</div>
+    </div>
+    <div>
+      <input type="text" id="userInput" placeholder="Digite sua mensagem..." />
+      <button onclick="sendMessage()">Enviar</button>
     </div>
   </div>
 
   <script>
-    const lines = document.querySelectorAll('.line');
-    const transitionScreen = document.getElementById('transition-screen');
-    const boot = document.getElementById('boot-animation');
-    const bootLine = document.querySelector('.boot-line');
-    const mainContent = document.getElementById('main-content');
+    // Digitação da primeira transição
+    const lines = [
+      { id: "line1", text: "> Estabelecendo conexão segura..." },
+      { id: "line2", text: "> Decodificando firewall..." },
+      { id: "line3", text: "> Acesso concedido." }
+    ];
 
-    anime({
-      targets: lines,
-      opacity: [0, 1],
-      delay: anime.stagger(1000),
-      easing: 'easeInOutQuad',
-      complete: () => {
-        setTimeout(() => {
-          transitionScreen.style.display = 'none';
-          boot.style.opacity = 1;
+    function typeLine(index) {
+      if (index >= lines.length) {
+        setTimeout(() => showBoot(), 800);
+        return;
+      }
 
+      const { id, text } = lines[index];
+      const el = document.getElementById(id);
+      el.style.opacity = 1;
+      let i = 0;
+      const typing = setInterval(() => {
+        if (i < text.length) {
+          el.textContent += text.charAt(i);
+          i++;
+        } else {
+          clearInterval(typing);
+          setTimeout(() => typeLine(index + 1), 500);
+        }
+      }, 50);
+    }
+
+    typeLine(0);
+
+    // Segunda transição (boot)
+    function showBoot() {
+      const transition = document.getElementById("transition-screen");
+      const boot = document.getElementById("boot-animation");
+      const bootLine = document.querySelector(".boot-line");
+
+      transition.style.display = 'none';
+      boot.style.opacity = 1;
+
+      anime({
+        targets: bootLine,
+        width: ['0%', '100%'],
+        duration: 1000,
+        easing: 'easeInOutExpo',
+        complete: () => {
           anime({
             targets: bootLine,
-            width: ['0%', '100%'],
-            duration: 1000,
+            height: ['2px', '100vh'],
+            duration: 800,
             easing: 'easeInOutExpo',
             complete: () => {
-              anime({
-                targets: bootLine,
-                height: ['2px', '100vh'],
-                duration: 800,
-                easing: 'easeInOutExpo',
-                complete: () => {
-                  boot.style.display = 'none';
-                  mainContent.style.display = 'block';
-                }
-              });
+              boot.style.display = 'none';
+              document.getElementById("main-content").style.display = 'block';
             }
           });
+        }
+      });
+    }
 
-        }, 1000);
-      }
-    });
+    // Chat Simples
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const msg = input.value.trim();
+      if (msg === "") return;
+
+      const chat = document.getElementById("chat-box");
+
+      const userMsg = document.createElement("div");
+      userMsg.className = "message user";
+      userMsg.textContent = "Você: " + msg;
+      chat.appendChild(userMsg);
+
+      const iaMsg = document.createElement("div");
+      iaMsg.className = "message ia";
+      iaMsg.textContent = "IA: " + getAIResponse(msg);
+      setTimeout(() => {
+        chat.appendChild(iaMsg);
+        chat.scrollTop = chat.scrollHeight;
+      }, 500);
+
+      input.value = "";
+    }
+
+    function getAIResponse(input) {
+      // Respostas básicas para simular IA
+      const respostas = {
+        "oi": "Olá, usuário.",
+        "quem é você": "Sou um sistema neural experimental.",
+        "tudo bem": "Estou funcional. E você?",
+      };
+
+      input = input.toLowerCase();
+      return respostas[input] || "Processando dados... ainda estou aprendendo.";
+    }
   </script>
 
 </body>
